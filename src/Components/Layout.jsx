@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router";
-import { useAuth } from "../context/auth.context";
+import { useAuth } from "../Context/auth.context";
 import supabase from "../utils/supabase";
 import { Plus } from "lucide-react";
 

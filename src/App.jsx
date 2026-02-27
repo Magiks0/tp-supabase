@@ -5,8 +5,8 @@ import LoginPage from './Pages/Auth/LoginPage';
 import Home from './Pages/Home';
 import ProtectedRoutes from './Context/ProtectedRoutes.jsx';
 import Article from './Pages/Article.jsx';
-import { AuthProvider } from './context/auth.context.jsx';
-import Layout from './Components/Layout.jsx';
+import { AuthProvider } from './Context/auth.context';
+import Layout from './Components/Layout';
 import AddArticleForm from './Components/AddArticle.jsx';
 import Stats from './Pages/Stats.jsx';
 

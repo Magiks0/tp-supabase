@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import supabase from "../utils/supabase";
-import Layout from "../components/Layout";
 
 export default function Stats() {
   const [metrics, setMetrics] = useState({
