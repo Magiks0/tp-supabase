@@ -8,6 +8,7 @@ import Article from './Pages/Article.jsx';
 import { AuthProvider } from './context/auth.context.jsx';
 import Layout from './Components/Layout.jsx';
 import AddArticleForm from './Components/AddArticle.jsx';
+import Stats from './Pages/Stats.jsx';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
          <Route element={<Layout />}>
             <Route element={<ProtectedRoutes />}>
                 <Route path="/post/new" element={<AddArticleForm />} />
+                 <Route path="/stats" element={<Stats />} />
             </Route>
           
             <Route index path="/home" element={<Home />} />

@@ -7,10 +7,9 @@ export default function Home() {
   const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
- 
-  useEffect(() => {
-    async function getAllPosts() {
-      const { data, error } = await supabase
+
+  const fetchPosts = async () => {
+    const { data, error } = await supabase
       .from('posts')
       .select(`
         id,
@@ -20,17 +19,26 @@ export default function Home() {
           username
         )
       `);
+    if (data) setArticles(data);
+    setLoading(false);
+  };
 
-      if (error) {
-        console.error(error);
-        return;
-      }
+  const channelA = supabase
+  .channel('posts-changes')
+  .on(
+    'postgres_changes',
+    {
+      event: '*',
+      schema: 'public',
+      table: 'posts'
+    },
+    () => fetchPosts()
+  )
+  .subscribe()
 
-      setArticles(data);
-      setLoading(false);
-    }
-    getAllPosts();
-  }, []);
+  useEffect(() => {
+    fetchPosts()
+  })
 
   return (
     <div className="min-h-screen text-slate-900 font-sans selection:bg-indigo-100">

@@ -13,9 +13,13 @@ export default function Article() {
   const navigate = useNavigate();
   const goBack = () => navigate(-1);
 
-  const userInfos = JSON.parse(user);
+  const isAdmin = false;
 
-  const isAdmin = userInfos.user.email.includes('admin');
+  if (user) {
+    const userInfos = JSON.parse(user);
+
+    const isAdmin = userInfos.user.email.includes('admin');
+  }
 
   const fetchComments = async () => {
     const { data } = await supabase
@@ -24,6 +28,19 @@ export default function Article() {
       .eq("post_id", id)
     if (data) setComments(data);
   };
+
+  const channelA = supabase
+  .channel('comments-changes')
+  .on(
+    'postgres_changes',
+    {
+      event: '*',
+      schema: 'public',
+      table: 'comments'
+    },
+    () => fetchComments()
+  )
+  .subscribe()
 
   const handleDelete = async () => {
     const { error } = await supabase
@@ -58,8 +75,8 @@ export default function Article() {
         return;
       }
       setArticles(data);
-      await fetchComments();
       setLoading(false);
+      fetchComments();
     }
     getPostDetails();
   }, [id]);
@@ -165,7 +182,7 @@ export default function Article() {
           </h3>
 
           {/* Formulaire */}
-          <CommentForm postId={id} onCommentAdded={fetchComments} />
+          {user && <CommentForm postId={id} onCommentAdded={fetchComments} />}
 
           {/* Liste des commentaires */}
           <div className="mt-16 space-y-10">
