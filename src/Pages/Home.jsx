@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import supabase from "../utils/supabase";
 import { useNavigate } from "react-router";
-import { useAuth } from "../context/auth.context";
 
 export default function Home() {
   const navigate = useNavigate();
