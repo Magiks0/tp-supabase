@@ -13,12 +13,11 @@ export default function Article() {
   const navigate = useNavigate();
   const goBack = () => navigate(-1);
 
-  const isAdmin = false;
+  let isAdmin = false;
 
   if (user) {
     const userInfos = JSON.parse(user);
-
-    const isAdmin = userInfos.user.email.includes('admin');
+    isAdmin = userInfos.user.email.includes('admin');
   }
 
   const fetchComments = async () => {
@@ -42,7 +41,7 @@ export default function Article() {
   )
   .subscribe()
 
-  const handleDelete = async () => {
+  const handleDeletePost = async () => {
     const { error } = await supabase
       .from('posts')
       .delete()
@@ -54,6 +53,18 @@ export default function Article() {
       }
 
       navigate('/home');
+  }
+
+  const handleDeleteComment = async (commentId) => {
+    const { error } = await supabase
+      .from('comments')
+      .delete()
+      .eq('id', commentId)
+
+      if (error) {
+        console.error(error);
+        return;
+      }
   }
 
   useEffect(() => {
@@ -79,7 +90,7 @@ export default function Article() {
       fetchComments();
     }
     getPostDetails();
-  }, [id]);
+  }, [id, fetchComments]);
 
   const article = articles[0];
 
@@ -111,7 +122,7 @@ export default function Article() {
         </button>
         {isAdmin && (
           <button 
-            onClick={handleDelete}
+            onClick={handleDeletePost}
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-red-500 bg-red-50 rounded-lg hover:bg-red-100 hover:text-red-600 transition-all active:scale-95"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -200,6 +211,16 @@ export default function Article() {
                       <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
                         {new Date(comment.created_at).toLocaleDateString('fr-FR')}
                       </p>
+                      {isAdmin && (
+                          <button 
+                            onClick={() => handleDeleteComment(comment.id)}
+                            className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-red-500 bg-red-50 rounded-lg hover:bg-red-100 hover:text-red-600 transition-all active:scale-95"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        )}
                     </div>
                   </div>
                   <div className="pl-11">
